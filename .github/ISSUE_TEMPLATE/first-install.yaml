@@ -1,0 +1,38 @@
+name: First-install feedback
+description: Share a fresh installation result, including failures
+title: "[First install]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Please omit private IPs, recordings, credentials and unreviewed logs. Failed attempts are useful too."
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware and versions
+      description: GPU, driver, Docker/TrueNAS version, HAOS version and architecture, companion/server versions
+    validations:
+      required: true
+  - type: dropdown
+    id: fresh
+    attributes:
+      label: Was the external server installed with fresh data?
+      options: ["Yes", "No — existing installation"]
+    validations:
+      required: true
+  - type: textarea
+    id: time
+    attributes:
+      label: Time and points of confusion
+      description: Separate downloads from setup time. Where did you need help?
+  - type: textarea
+    id: results
+    attributes:
+      label: What worked and what failed?
+      description: App install, connection, sample, Assist, companion stopped, restart, update/rollback (or not tested)
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Optional reviewed diagnostics
+      render: json
