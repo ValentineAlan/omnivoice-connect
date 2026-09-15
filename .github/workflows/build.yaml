@@ -1,0 +1,72 @@
+name: Test and publish companion
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: companion-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+      - run: python -m compileall -q connect
+      - run: node --check connect/static/app.js
+      - name: Test container startup and privilege drop with fresh storage
+        run: |
+          docker build -t connect-test connect
+          docker run -d --name connect-test --mount type=volume,source=connect-test-data,target=/data connect-test
+          for attempt in 1 2 3 4 5; do
+            if docker exec connect-test python -c "from pathlib import Path; s=Path('/proc/1/status').read_text(); assert 'Uid:\t568\t568\t568\t568' in s"; then break; fi
+            sleep 1
+          done
+          docker exec connect-test python -c "from pathlib import Path; s=Path('/proc/1/status').read_text(); assert 'Uid:\t568\t568\t568\t568' in s"
+      - name: Validate generated deployment configuration
+        run: |
+          python -c "import sys; sys.path.insert(0, 'connect'); from server import compose; print(compose(10200, 'docker', ''))" | docker compose -f - config --quiet
+          python -c "import sys; sys.path.insert(0, 'connect'); from server import compose; print(compose(10200, 'truenas', '/mnt/pool/voice data'))" | docker compose -f - config --quiet
+  build:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select tag
+        id: tag
+        shell: bash
+        run: |
+          TAG=edge
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF_NAME#v}"
+            [[ "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+            grep -Fx "version: \"$TAG\"" connect/config.yaml
+            grep -Fx "VERSION = \"$TAG\"" connect/server.py
+          fi
+          echo "value=$TAG" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: connect
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/valentinealan/omnivoice-connect:${{ steps.tag.outputs.value }}
+          build-args: BUILD_VERSION=${{ steps.tag.outputs.value }}
