@@ -1,0 +1,16 @@
+name: Installation problem
+description: Report a companion setup or connectivity problem
+body:
+  - type: textarea
+    id: issue
+    attributes:
+      label: What happened?
+      description: Steps to reproduce, expected result and the message you saw. Omit private data.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Companion, HAOS and server versions
+    validations:
+      required: true
