@@ -29,6 +29,9 @@ Already have a working server? Skip the companion and
 See the [walkthrough](connect/DOCS.md), [external server](https://github.com/ValentineAlan/wyoming-omnivoice)
 and [independent test checklist](docs/tester-guide.md).
 
+**First-install testers wanted:** join the [3–5 person trial](https://github.com/ValentineAlan/omnivoice-connect/issues/1).
+Successful and unsuccessful attempts both help improve the setup guide.
+
 ## Development and boundaries
 
 Python 3.12 standard library only. Run `python -m unittest discover -s tests -v`.
