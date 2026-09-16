@@ -23,8 +23,10 @@ participants have completed this trial. Do not announce broad compatibility unti
 reports support it. The owner-assisted test is separate evidence.
 
 The [public trial tracker](https://github.com/ValentineAlan/omnivoice-connect/issues/1)
-is open for reports. The forum invitation is prepared in `community-invitation.md`;
-record its published link here once the forum account is ready.
+is open for reports. The forum invitation was submitted to Home Assistant Community's
+Share your Projects category on 16 September 2026. The forum confirmed receipt and
+placed it in the moderator approval queue (one pending post). It is not public yet;
+record its public topic link here after approval. Do not submit a duplicate.
 
 ## Broader distribution after trial
 
