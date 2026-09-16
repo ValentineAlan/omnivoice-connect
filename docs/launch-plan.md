@@ -22,6 +22,10 @@ volunteers. Track voluntary reports in GitHub issues; currently no independent
 participants have completed this trial. Do not announce broad compatibility until
 reports support it. The owner-assisted test is separate evidence.
 
+The [public trial tracker](https://github.com/ValentineAlan/omnivoice-connect/issues/1)
+is open for reports. The forum invitation is prepared in `community-invitation.md`;
+record its published link here once the forum account is ready.
+
 ## Broader distribution after trial
 
 Maintain that community topic as the canonical announcement. Adapt the explanation
